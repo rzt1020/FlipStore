@@ -1,0 +1,5 @@
+name: FlipStore
+version: '${project.version}'
+main: cn.myrealm.flipshop.FlipStore
+api-version: 1.19
+authors: [ ManyouTeam ]
