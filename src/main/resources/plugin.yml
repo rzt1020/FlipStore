@@ -1,5 +1,10 @@
 name: FlipStore
 version: '${project.version}'
-main: cn.myrealm.flipshop.FlipStore
+main: cn.myrealm.flipstore.FlipStore
 api-version: 1.19
 authors: [ ManyouTeam ]
+commands:
+  flipstore:
+    aliases:
+      - fs
+    description: Base command

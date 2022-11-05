@@ -1,11 +1,17 @@
 package cn.myrealm.flipstore;
 
+import cn.myrealm.flipstore.commands.CommandFlipstore;
+import cn.myrealm.flipstore.managers.DatabaseManager;
+import cn.myrealm.flipstore.managers.LanguageManager;
 import cn.myrealm.flipstore.managers.Manager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +29,17 @@ public final class FlipStore extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        File file = new File(getDataFolder(),"config.yml");
+        if(!file.exists()) {
+            saveDefaultConfig();
+            resourcesOutput();
+        }
+        managers = new ArrayList<>();
+        managers.add(new LanguageManager());
+        managers.add(new DatabaseManager());
+        Objects.requireNonNull(getCommand("flipstore")).setExecutor(new CommandFlipstore());
+
+        DatabaseManager.instance.vanillaSelect("APPLE",0);
     }
 
     /**
@@ -35,6 +52,7 @@ public final class FlipStore extends JavaPlugin {
     @Override
     public void onDisable() {
         instance = null;
+        DatabaseManager.instance.shutdown();
     }
 
     /**

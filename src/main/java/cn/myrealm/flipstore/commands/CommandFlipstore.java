@@ -8,18 +8,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @program: FlipShop
+ * @program: FlipStore
  * @description: Root command
  * @author: rzt1020
  * @create: 2022/10/14
  **/
 public class CommandFlipstore implements CommandExecutor {
-    private static final Map<String,CommandExecutor> sub_commands = new HashMap<>(); // command name, subcommand map
+    private static final Map<String,CommandExecutor> subCommands = new HashMap<>(); // command name, subcommand map
     static {
-        sub_commands.put("reload",new CommandReload());
+        subCommands.put("reload",new CommandReload());
     }
 
-    private void executeCommand() {
+    public void executeCommand() {
 
     }
 
@@ -33,8 +33,13 @@ public class CommandFlipstore implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equals("flipstore")) {
-
-            return true;
+            if (args.length == 0) {
+                return true;
+            } else {
+                if (subCommands.containsKey(args[0].toLowerCase())) {
+                    return subCommands.get(args[0].toLowerCase()).onCommand(sender, command, label, args);
+                }
+            }
         }
         return false;
     }

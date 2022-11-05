@@ -10,14 +10,14 @@ import java.util.Objects;
 
 /**
  * @program: FlipStore
- * @description: Managing Language Information
+ * @description: Managing language information
  * @author: rzt1020
  * @create: 2022/09/28
  **/
-public class LanguageManager extends Manager{
+public class LanguageManager implements Manager{
     // vars
     public static LanguageManager instance; // language manager instance
-    private final YamlConfiguration langYml; // the loaded language file <Yaml>
+    private YamlConfiguration langYml; // the loaded language file <Yaml>
     
     /**
      * @Description: Constructor
@@ -27,12 +27,24 @@ public class LanguageManager extends Manager{
      * @Date: 2022/9/28
     **/
     public LanguageManager() {
+        reload();
+    }
+
+    /**
+     * @Description: init and reload the manager
+     * @Param: []
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/5
+    **/
+    @Override
+    public void reload() {
         instance = this;
         String lang = FlipStore.instance.getConfig().getString("language", "english");
         File file = new File(FlipStore.instance.getDataFolder(), "language/" + lang + ".yml");
         langYml = YamlConfiguration.loadConfiguration(file);
     }
-    
+
     /**
      * @Description: Get text from language file
      * @Param: [key]
@@ -55,14 +67,14 @@ public class LanguageManager extends Manager{
      * @Author: rzt1020
      * @Date: 2022/9/28
     **/
-    public String getVarText(@NonNull String key, Map<String,String> var_map) {
+    public String getVarText(@NonNull String key, Map<String,String> varMap) {
         String text = getText(key);
-        if (Objects.isNull(var_map)) {
+        if (Objects.isNull(varMap)) {
             return text;
         }
-        for (String var : var_map.keySet()) {
-            if (Objects.nonNull(var_map.get(var))) {
-                text = text.replace("%"+var+"%",var_map.get(var));
+        for (String var : varMap.keySet()) {
+            if (Objects.nonNull(varMap.get(var))) {
+                text = text.replace("%"+var+"%",varMap.get(var));
             }
         }
         return text;

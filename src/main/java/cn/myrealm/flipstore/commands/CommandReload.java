@@ -1,5 +1,6 @@
 package cn.myrealm.flipstore.commands;
 
+import cn.myrealm.flipstore.FlipStore;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,8 +12,28 @@ import org.bukkit.command.CommandSender;
  * @create: 2022/10/14
  **/
 public class CommandReload implements CommandExecutor {
+
+    /**
+     * @Description: execute the reload command
+     * @Param: []
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/5
+    **/
+    public void executeCommand() {
+        FlipStore.instance.reload();
+    }
+
+    /**
+     * @Description: Call when reload command is sent
+     * @Param: [sender, command, label, args]
+     * @return: boolean
+     * @Author: rzt1020
+     * @Date: 2022/11/5
+    **/
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        return false;
+        executeCommand();
+        return true;
     }
 }
