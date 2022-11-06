@@ -37,6 +37,7 @@ public final class FlipStore extends JavaPlugin {
         managers = new ArrayList<>();
         managers.add(new LanguageManager());
         managers.add(new DatabaseManager());
+
         Objects.requireNonNull(getCommand("flipstore")).setExecutor(new CommandFlipstore());
     }
 

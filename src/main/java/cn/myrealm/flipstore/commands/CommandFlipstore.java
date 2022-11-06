@@ -4,8 +4,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @program: FlipStore
@@ -13,12 +11,13 @@ import java.util.Map;
  * @author: rzt1020
  * @create: 2022/10/14
  **/
-public class CommandFlipstore implements CommandExecutor {
-    private static final Map<String,CommandExecutor> subCommands = new HashMap<>(); // command name, subcommand map
+public class CommandFlipstore extends FlipCommand implements CommandExecutor {
     static {
-        subCommands.put("reload",new CommandReload());
+        subCommands.put("reload", new CommandReload());
+        subCommands.put("setup", new CommandSetup());
     }
 
+    @Override
     public void executeCommand() {
 
     }
@@ -34,10 +33,11 @@ public class CommandFlipstore implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equals("flipstore")) {
             if (args.length == 0) {
+                executeCommand();
                 return true;
             } else {
                 if (subCommands.containsKey(args[0].toLowerCase())) {
-                    return subCommands.get(args[0].toLowerCase()).onCommand(sender, command, label, args);
+                    return subCommands.get(args[0].toLowerCase()).onCommand(sender, command, label, argsUpdate(args));
                 }
             }
         }

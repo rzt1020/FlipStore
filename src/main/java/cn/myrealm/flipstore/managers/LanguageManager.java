@@ -55,11 +55,18 @@ public class LanguageManager implements Manager{
      * @Date: 2022/9/28
     **/
     public String getText(@NonNull String key) {
-        if (langYml.contains(key)) {
-            String text = langYml.getString(key,"");
-            return FlipStore.parseColor(text);
+        String text = ""; // result of the key
+        try {
+            if (langYml.contains(key)) {
+                text = langYml.getString(key,"");
+                text = FlipStore.parseColor(text);
+            }
+            throw new IllegalArgumentException("No such language key");
+        } catch (Exception e) {
+            severe(e);
+
         }
-        throw new IllegalArgumentException("No such language key");
+        return text;
     }
     
     /**
@@ -129,5 +136,16 @@ public class LanguageManager implements Manager{
     **/
     public void sendMessage(@NonNull Player player, @NonNull String msg) {
         Bukkit.getScheduler().runTask(FlipStore.instance, () -> player.sendMessage(msg));
+    }
+
+    /**
+     * @Description: send message by key, to a playee synchronized
+     * @Param: [key, player]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/6
+    **/
+    public void sendMessage(@NonNull String key, @NonNull Player player) {
+        sendMessage(player, getText(key));
     }
 }

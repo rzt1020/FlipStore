@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
  * @author: rzt1020
  * @create: 2022/10/14
  **/
-public class CommandReload implements CommandExecutor {
+public class CommandReload extends FlipCommand implements CommandExecutor {
 
     /**
      * @Description: execute the reload command
@@ -20,6 +20,7 @@ public class CommandReload implements CommandExecutor {
      * @Author: rzt1020
      * @Date: 2022/11/5
     **/
+    @Override
     public void executeCommand() {
         FlipStore.instance.reload();
     }
