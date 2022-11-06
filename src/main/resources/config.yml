@@ -1,2 +1,12 @@
+# Supported Languages: english, chinese
 language: chinese
+# If true, please configure mysql in detail, if false, sqlite will be used
 use-mysql: false
+mysql:
+  host: localhost
+  port: 3306
+  database: data
+  user: root
+  pass: root
+  # Please don't make it true, if you don't understand what SSL is
+  use-ssl: false

@@ -1,7 +1,9 @@
 package cn.myrealm.flipstore.managers;
 
 import cn.myrealm.flipstore.FlipStore;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
@@ -94,5 +96,38 @@ public class LanguageManager implements Manager{
         }
         text = text.replace("%"+var+"%",content);
         return text;
+    }
+    
+    /**
+     * @Description: Output the error report to the server console
+     * @Param: [e]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/6
+    **/
+    public void severe(@NonNull Exception e) {
+        FlipStore.instance.getLogger().severe( e.getClass().getName() + ": " + e.getMessage() );
+    }
+    
+    /**
+     * @Description: Log to the server console
+     * @Param: [msg]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/6
+    **/
+    public void log(@NonNull String msg) {
+        FlipStore.instance.getLogger().info(msg);
+    }
+    
+    /**
+     * @Description: send message to a player synchronized
+     * @Param: [player, msg]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/6
+    **/
+    public void sendMessage(@NonNull Player player, @NonNull String msg) {
+        Bukkit.getScheduler().runTask(FlipStore.instance, () -> player.sendMessage(msg));
     }
 }

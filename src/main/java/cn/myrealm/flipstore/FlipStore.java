@@ -38,8 +38,6 @@ public final class FlipStore extends JavaPlugin {
         managers.add(new LanguageManager());
         managers.add(new DatabaseManager());
         Objects.requireNonNull(getCommand("flipstore")).setExecutor(new CommandFlipstore());
-
-        DatabaseManager.instance.vanillaSelect("APPLE",0);
     }
 
     /**
