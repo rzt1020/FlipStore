@@ -29,6 +29,8 @@ public class CommandSetup extends FlipCommand implements CommandExecutor {
     **/
     public void executeCommand(Player player) {
         LanguageManager.instance.sendMessage("setup-start", player);
+        LanguageManager.instance.sendMessage("setup-F-key", player);
+        LanguageManager.instance.sendMessage("setup-cancel", player);
         Listener listener = new SetupListener(player);
         Bukkit.getPluginManager().registerEvents(listener, FlipStore.instance);
     }
@@ -45,7 +47,7 @@ public class CommandSetup extends FlipCommand implements CommandExecutor {
      * @Date: 2022/11/6
     **/
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@SuppressWarnings("NullableProblems") CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             executeCommand(player);

@@ -3,3 +3,5 @@ only-player: 该操作仅玩家可用。
 setup-start: 配置模式已开启。
 setup-F-key: 手持需要配置的物品按“F”，开启配置GUI。
 setup-cancel: 对话框输入"cancel"来关闭配置模式。
+setup-canceled: 配置模式已关闭。
+setup-title: 配置菜单

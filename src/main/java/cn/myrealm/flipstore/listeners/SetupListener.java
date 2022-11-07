@@ -1,12 +1,17 @@
 package cn.myrealm.flipstore.listeners;
 
+import cn.myrealm.flipstore.FlipStore;
+import cn.myrealm.flipstore.guis.SetupGUI;
 import cn.myrealm.flipstore.managers.LanguageManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+
+import java.util.Objects;
 
 /**
  * @program: FlipStore
@@ -39,7 +44,7 @@ public class SetupListener implements Listener {
     @EventHandler
     public void onCancelSetup (AsyncPlayerChatEvent e) {
         if (e.getPlayer().equals(player) && e.getMessage().equals("cancel")) {
-            LanguageManager.instance.sendMessage("setup-cancel", player);
+            LanguageManager.instance.sendMessage("setup-canceled", player);
             e.setCancelled(true);
             HandlerList.unregisterAll(this);
         }
@@ -55,7 +60,13 @@ public class SetupListener implements Listener {
     @EventHandler
     public void onPress_F_Key (PlayerSwapHandItemsEvent e) {
         if (e.getPlayer().equals(player)) {
-            //LanguageManager.instance.sendMessage(player, String.valueOf(e.getOffHandItem()));
+            if (Objects.nonNull(e.getMainHandItem()) && !e.getMainHandItem().getType().isAir()) {
+                SetupGUI setupGUI = new SetupGUI(player, e.getMainHandItem());
+                Listener guiListener = new GUIListener(setupGUI);
+                Bukkit.getPluginManager().registerEvents(guiListener, FlipStore.instance);
+                setupGUI.openGUI();
+            }
+            e.setCancelled(true);
         }
     }
 }

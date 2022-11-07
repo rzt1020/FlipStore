@@ -37,16 +37,16 @@ public abstract class FlipGUI {
     protected abstract void constructGUI();
 
     /**
-     * @Description: handle the click event in this method
+     * @Description: handle the click event in this method, return true to allow move the item
      * @Param: [slot]
      * @return: void
      * @Author: rzt1020
      * @Date: 2022/11/6
     **/
-    public abstract void clickEventHandle(int slot);
+    public abstract boolean clickEventHandle(int slot);
     
     /**
-     * @Description: handle the close event in this method, return true the really close the gui
+     * @Description: handle the close event in this method, return true to really close the gui
      * @Param: []
      * @return: boolean
      * @Author: rzt1020

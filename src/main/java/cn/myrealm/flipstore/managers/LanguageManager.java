@@ -60,8 +60,9 @@ public class LanguageManager implements Manager{
             if (langYml.contains(key)) {
                 text = langYml.getString(key,"");
                 text = FlipStore.parseColor(text);
+            } else {
+                throw new IllegalArgumentException("No such language key: " + key);
             }
-            throw new IllegalArgumentException("No such language key");
         } catch (Exception e) {
             severe(e);
 

@@ -1,6 +1,7 @@
 package cn.myrealm.flipstore.listeners;
 
 import cn.myrealm.flipstore.guis.FlipGUI;
+import cn.myrealm.flipstore.managers.LanguageManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -8,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+
+import java.util.Objects;
 
 /**
  * @program: FlipStore
@@ -27,28 +30,41 @@ public class GUIListener implements Listener {
      * @Author: rzt1020
      * @Date: 2022/11/6
     **/
-    public GUIListener(Player player, FlipGUI gui) {
-        this.player = player;
+    public GUIListener(FlipGUI gui) {
         this.gui = gui;
+        this.player = gui.getOwner();
     }
 
-
+    
+    /**
+     * @Description: cancel the click event if handle returns true
+     * @Param: [e]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/7
+    **/
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if (e.getWhoClicked().equals(player)) {
-            e.setCancelled(true);
-        }
-        if(e.getClick().toString().equals("SWAP_OFFHAND") && e.isCancelled()) {
-            player.getInventory().setItemInOffHand(player.getInventory().getItemInOffHand());
-        }
-        if (e.getInventory().equals(gui.getInventory())) {
-            gui.clickEventHandle(e.getSlot());
+        if (e.getWhoClicked().equals(player) && Objects.equals(e.getClickedInventory(), gui.getInventory())) {
+            e.setCancelled(gui.clickEventHandle(e.getSlot()));
+            if(e.getClick().toString().equals("SWAP_OFFHAND") && e.isCancelled()) {
+                player.getInventory().setItemInOffHand(player.getInventory().getItemInOffHand());
+            }
         }
     }
+    
+    /**
+     * @Description: cancel the drag event
+     * @Param: [e]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/7
+    **/
     @EventHandler
     public void onDrag(InventoryDragEvent e) {
         if (e.getWhoClicked().equals(player)) {
-            e.setCancelled(true);
+            //e.setCancelled(true);
+            LanguageManager.instance.sendMessage(player,e.getInventorySlots().toString());
         }
     }
 
@@ -59,7 +75,7 @@ public class GUIListener implements Listener {
                 HandlerList.unregisterAll(this);
                 player.updateInventory();
             } else {
-
+                gui.openGUI();
             }
         }
     }
