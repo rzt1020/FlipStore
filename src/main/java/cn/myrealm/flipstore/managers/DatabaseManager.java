@@ -2,10 +2,7 @@ package cn.myrealm.flipstore.managers;
 
 import cn.myrealm.flipstore.FlipStore;
 import cn.myrealm.flipstore.utils.ItemData;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.sql.*;
 import java.util.Objects;
@@ -62,11 +59,12 @@ public class DatabaseManager implements Manager{
                                                         section.getString("user", "root"),
                                                         section.getString("pass", "root"));
                 stmt = mysql.createStatement();
-                String sql = "CREATE TABLE IF NOT EXISTS FS_VANILLA " +
-                             "(MATERIAL VARCHAR(50) PRIMARY KEY     NOT NULL," +
+                String sql = "CREATE TABLE IF NOT EXISTS FS_NBT " +
+                             "(HASH VARCHAR(16) PRIMARY KEY     NOT NULL," +
                              " PRICE    REAL, " +
                              " TIMES    INTEGER, " +
-                             " ECONOMIC REAL);";
+                             " ECONOMIC REAL, " +
+                             " ABLE     TINYINT);";
                 stmt.executeUpdate(sql);
                 stmt.close();
             } catch (Exception e) {
@@ -78,11 +76,12 @@ public class DatabaseManager implements Manager{
                 Class.forName("org.sqlite.JDBC");
                 sqlite = DriverManager.getConnection("jdbc:sqlite:"+FlipStore.instance.getDataFolder()+"/data.db");
                 stmt = sqlite.createStatement();
-                String sql = "CREATE TABLE IF NOT EXISTS FS_VANILLA " +
-                             "(MATERIAL TEXT PRIMARY KEY     NOT NULL," +
+                String sql = "CREATE TABLE IF NOT EXISTS FS_NBT " +
+                             "(HASH TEXT PRIMARY KEY     NOT NULL," +
                              " PRICE    REAL, " +
                              " TIMES    INT, " +
-                             " ECONOMIC REAL);";
+                             " ECONOMIC REAL, " +
+                             " ABLE     INT);";
                 stmt.executeUpdate(sql);
                 stmt.close();
             } catch ( Exception e ) {
@@ -120,25 +119,25 @@ public class DatabaseManager implements Manager{
     }
     
     /**
-     * @Description: insert a vanilla item record, returns true, if successful
-     * @Param: [material, cmd]
-     * @return: boolean
+     * @Description: insert an item record, returns item data, if successful
+     * @Param: [hash]
+     * @return: void
      * @Author: rzt1020
      * @Date: 2022/11/5
     **/
-    public boolean vanillaInsert(String material, int cmd) {
-        ItemData itemData = vanillaSelect(material, cmd);
+    public ItemData NBTInsert(String hash) {
+        ItemData itemData = NBTSelect(hash);
         if (Objects.nonNull(itemData)) {
-            return false;
+            return itemData;
         }
-        String combineMaterial = material.toUpperCase() + ":" + cmd; // combine material and cmd
         Statement stmt;
         if (useMySql) {
             try {
                 stmt = mysql.createStatement();
-                String sql = "INSERT INTO FS_VANILLA "+
-                             "(MATERIAL,PRICE,TIMES,ECONOMIC) " +
-                             "VALUES (" + "'" + combineMaterial + "'" + ",0,0,0);";
+                String sql = "INSERT INTO FS_NBT "+
+                             "(HASH,PRICE,TIMES,ECONOMIC,ABLE) " +
+                             "VALUES (" + "'" + hash + "'" + "," +
+                             FlipStore.instance.getConfig().getDouble("default-price", 0.01) + ",0,0,1);";
                 stmt.executeUpdate(sql);
                 stmt.close();
             } catch ( Exception e ) {
@@ -147,48 +146,42 @@ public class DatabaseManager implements Manager{
         } else {
             try {
                 stmt = sqlite.createStatement();
-                String sql = "INSERT INTO FS_VANILLA "+
-                             "(MATERIAL,PRICE,TIMES,ECONOMIC) " +
-                             "VALUES (" + "'" + combineMaterial + "'" + ",0,0,0);";
+                String sql = "INSERT INTO FS_NBT "+
+                             "(HASH,PRICE,TIMES,ECONOMIC,ABLE) " +
+                             "VALUES (" + "'" + hash + "'" + "," +
+                             FlipStore.instance.getConfig().getDouble("default-price", 0.01) + ",0,0,1);";
                 stmt.executeUpdate(sql);
                 stmt.close();
             } catch ( Exception e ) {
                 LanguageManager.instance.severe(e);
             }
         }
-        return true;
+        return NBTSelect(hash);
     }
 
     /**
-     * @Description: select a vanilla item by material name
-     * @Param: [material, cmd]
+     * @Description: select an item by material name
+     * @Param: [hash]
      * @return: cn.myrealm.flipstore.utils.ItemData
      * @Author: rzt1020
      * @Date: 2022/11/6
     **/
-    public ItemData vanillaSelect(String material, int cmd) {
+    public ItemData NBTSelect(String hash) {
         ItemData itemData = null; // item data
-        String combineMaterial = material.toUpperCase() + ":" + cmd; // combine material and cmd
         Statement stmt;
         if(useMySql) {
             ResultSet rs;
             try {
                 stmt = mysql.createStatement();
                 String sql = "SELECT * " +
-                             "FROM FS_VANILLA " +
-                             "WHERE MATERIAL = " + "'" + combineMaterial + "';";
+                             "FROM FS_NBT " +
+                             "WHERE HASH = " + "'" + hash + "';";
                 rs = stmt.executeQuery(sql);
                 while (rs.next()) {
-                    ItemStack itemStack = new ItemStack(Objects.requireNonNull(Material.getMaterial(material)));
-                    ItemMeta itemMeta = itemStack.getItemMeta();
-                    assert itemMeta != null;
-                    itemMeta.setCustomModelData(cmd);
-                    itemStack.setItemMeta(itemMeta);
-                    itemData = new ItemData(itemStack,
-                                            rs.getDouble("PRICE"),
+                    itemData = new ItemData(rs.getDouble("PRICE"),
                                             rs.getInt("TIMES"),
-                                            rs.getDouble("ECONOMIC"));
-
+                                            rs.getDouble("ECONOMIC"),
+                                            rs.getBoolean("ABLE"));
                 }
                 rs.close();
                 stmt.close();
@@ -200,17 +193,14 @@ public class DatabaseManager implements Manager{
             try {
                 stmt = sqlite.createStatement();
                 String sql = "SELECT * " +
-                             "FROM FS_VANILLA " +
-                             "WHERE MATERIAL = " + "'" + combineMaterial + "';";
+                             "FROM FS_NBT " +
+                             "WHERE HASH = " + "'" + hash + "';";
                 rs = stmt.executeQuery(sql);
                 if (rs.next()) {
-                    ItemStack itemStack = new ItemStack(Objects.requireNonNull(Material.getMaterial(material)));
-                    ItemMeta itemMeta = itemStack.getItemMeta();
-                    itemStack.setItemMeta(itemMeta);
-                    itemData = new ItemData(itemStack,
-                                            rs.getDouble("PRICE"),
+                    itemData = new ItemData(rs.getDouble("PRICE"),
                                             rs.getInt("TIMES"),
-                                            rs.getDouble("ECONOMIC"));
+                                            rs.getDouble("ECONOMIC"),
+                                            rs.getBoolean("ABLE"));
                 }
                 rs.close();
                 stmt.close();
@@ -222,25 +212,24 @@ public class DatabaseManager implements Manager{
     }
 
     /**
-     * @Description: update a vanilla item's price by material name, returns true, if successful
-     * @Param: [material, cmd, price]
+     * @Description: update an item's price by material name
+     * @Param: [hash, price]
      * @return: boolean
      * @Author: rzt1020
      * @Date: 2022/11/6
     **/
-    public boolean vanillaPriceUpdate(String material, int cmd, double price) {
-        String combineMaterial = material.toUpperCase() + ":" + cmd; // combine material and cmd
-        ItemData itemData = vanillaSelect(material, cmd);
+    public void NBTPriceUpdate(String hash, double price) {
+        ItemData itemData = NBTSelect(hash);
         if (Objects.isNull((itemData))) {
-            return false;
+            return;
         }
         Statement stmt;
         if (useMySql) {
             try {
                 stmt = mysql.createStatement();
-                String sql = "UPDATE FS_VANILLA " +
+                String sql = "UPDATE FS_NBT " +
                              "SET PRICE = " + price + " " +
-                             "WHERE MATERIAL = '" + combineMaterial +"';";
+                             "WHERE HASH = '" + hash +"';";
                 stmt.executeUpdate(sql);
             } catch ( Exception e ) {
                 LanguageManager.instance.severe(e);
@@ -248,27 +237,25 @@ public class DatabaseManager implements Manager{
         } else {
             try {
                 stmt = sqlite.createStatement();
-                String sql = "UPDATE FS_VANILLA " +
+                String sql = "UPDATE FS_NBT " +
                              "SET PRICE = " + price + " " +
-                             "WHERE MATERIAL = '" + combineMaterial +"';";
+                             "WHERE HASH = '" + hash +"';";
                 stmt.executeUpdate(sql);
             } catch ( Exception e ) {
                 LanguageManager.instance.severe(e);
             }
         }
-        return true;
     }
     
     /**
-     * @Description: update a vanilla item's record by material name, returns true, if successful
-     * @Param: [material, cmd, thisTimes]
-     * @return: boolean
+     * @Description: update an item's record by material name, returns true, if successful
+     * @Param: [hash, thisTimes]
+     * @return: void
      * @Author: rzt1020
      * @Date: 2022/11/6
     **/
-    public boolean vanillaRecordUpdate(String material, int cmd, int thisTimes) {
-        String combineMaterial = material.toUpperCase() + ":" + cmd; // combine material and cmd
-        ItemData itemData = vanillaSelect(material, cmd);
+    public boolean NBTRecordUpdate(String hash, int thisTimes) {
+        ItemData itemData = NBTSelect(hash);
         if (Objects.isNull((itemData))) {
             return false;
         }
@@ -278,10 +265,10 @@ public class DatabaseManager implements Manager{
         if (useMySql) {
             try {
                 stmt = mysql.createStatement();
-                String sql = "UPDATE FS_VANILLA " +
+                String sql = "UPDATE FS_NBT " +
                              "SET TIMES = " + times + ", " +
                              "ECONOMIC = " + economic + " " +
-                             "WHERE MATERIAL = '" + combineMaterial +"';";
+                             "WHERE HASH = '" + hash +"';";
                 stmt.executeUpdate(sql);
             } catch ( Exception e ) {
                 LanguageManager.instance.severe(e);
@@ -289,10 +276,10 @@ public class DatabaseManager implements Manager{
         } else {
             try {
                 stmt = sqlite.createStatement();
-                String sql = "UPDATE FS_VANILLA " +
+                String sql = "UPDATE FS_NBT " +
                              "SET TIMES = " + times + ", " +
                              "ECONOMIC = " + economic + " " +
-                             "WHERE MATERIAL = '" + combineMaterial +"';";
+                             "WHERE HASH = '" + hash +"';";
                 stmt.executeUpdate(sql);
             } catch ( Exception e ) {
                 LanguageManager.instance.severe(e);
@@ -300,4 +287,42 @@ public class DatabaseManager implements Manager{
         }
         return true;
     }
+    
+    /**
+     * @Description: if the original is able, set to disable; if the original is disabled, set to be able
+     * @Param: [hash]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/8
+    **/
+    public void NBTAbleUpdate(String hash) {
+        ItemData itemData = NBTSelect(hash);
+        if (Objects.isNull((itemData))) {
+            return;
+        }
+        
+        Statement stmt;
+        if (useMySql) {
+            try {
+                stmt = mysql.createStatement();
+                String sql = "UPDATE FS_NBT " +
+                        "SET ABLE = " + (itemData.isAble() ? 0 : 1) + " " +
+                        "WHERE HASH = '" + hash +"';";
+                stmt.executeUpdate(sql);
+            } catch ( Exception e ) {
+                LanguageManager.instance.severe(e);
+            }
+        } else {
+            try {
+                stmt = sqlite.createStatement();
+                String sql = "UPDATE FS_NBT " +
+                        "SET ABLE = " + (itemData.isAble() ? 0 : 1) + " " +
+                        "WHERE HASH = '" + hash +"';";
+                stmt.executeUpdate(sql);
+            } catch ( Exception e ) {
+                LanguageManager.instance.severe(e);
+            }
+        }
+    }
+
 }

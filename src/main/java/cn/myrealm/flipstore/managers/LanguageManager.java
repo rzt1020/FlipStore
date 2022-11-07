@@ -2,6 +2,7 @@ package cn.myrealm.flipstore.managers;
 
 import cn.myrealm.flipstore.FlipStore;
 import org.bukkit.Bukkit;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -58,7 +59,7 @@ public class LanguageManager implements Manager{
         String text = ""; // result of the key
         try {
             if (langYml.contains(key)) {
-                text = langYml.getString(key,"");
+                text = "&r&f" + langYml.getString(key,"");
                 text = FlipStore.parseColor(text);
             } else {
                 throw new IllegalArgumentException("No such language key: " + key);
@@ -125,7 +126,9 @@ public class LanguageManager implements Manager{
      * @Date: 2022/11/6
     **/
     public void log(@NonNull String msg) {
-        FlipStore.instance.getLogger().info(msg);
+        //FlipStore.instance.getLogger().info(msg);
+        ConsoleCommandSender consoleSender = FlipStore.instance.getServer().getConsoleSender();
+        consoleSender.sendMessage(getText("flipstore") + msg);
     }
     
     /**
@@ -136,11 +139,12 @@ public class LanguageManager implements Manager{
      * @Date: 2022/11/6
     **/
     public void sendMessage(@NonNull Player player, @NonNull String msg) {
-        Bukkit.getScheduler().runTask(FlipStore.instance, () -> player.sendMessage(msg));
+        Bukkit.getScheduler().runTask(FlipStore.instance,
+                () -> player.sendMessage(getText("flipstore") + msg));
     }
 
     /**
-     * @Description: send message by key, to a playee synchronized
+     * @Description: send message by key, to a player synchronized
      * @Param: [key, player]
      * @return: void
      * @Author: rzt1020
@@ -149,4 +153,5 @@ public class LanguageManager implements Manager{
     public void sendMessage(@NonNull String key, @NonNull Player player) {
         sendMessage(player, getText(key));
     }
+
 }

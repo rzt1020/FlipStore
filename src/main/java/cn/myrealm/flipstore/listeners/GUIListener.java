@@ -1,7 +1,6 @@
 package cn.myrealm.flipstore.listeners;
 
-import cn.myrealm.flipstore.guis.FlipGUI;
-import cn.myrealm.flipstore.managers.LanguageManager;
+import cn.myrealm.flipstore.guis.InventoryGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -21,7 +20,7 @@ import java.util.Objects;
 public class GUIListener implements Listener {
     // vars
     private final Player player; // the player this gui open for
-    private final FlipGUI gui; // the gui call this listener
+    private final InventoryGUI gui; // the gui call this listener
 
     /**
      * @Description: Constructor
@@ -30,7 +29,7 @@ public class GUIListener implements Listener {
      * @Author: rzt1020
      * @Date: 2022/11/6
     **/
-    public GUIListener(FlipGUI gui) {
+    public GUIListener(InventoryGUI gui) {
         this.gui = gui;
         this.player = gui.getOwner();
     }
@@ -63,11 +62,19 @@ public class GUIListener implements Listener {
     @EventHandler
     public void onDrag(InventoryDragEvent e) {
         if (e.getWhoClicked().equals(player)) {
-            //e.setCancelled(true);
-            LanguageManager.instance.sendMessage(player,e.getInventorySlots().toString());
+            if (gui.dragEventHandle(e.getInventorySlots())) {
+                e.setCancelled(true);
+            }
         }
     }
 
+    /**
+     * @Description: reopen the gui when the return is false
+     * @Param: [e]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/8
+    **/
     @EventHandler
     public void onClose(InventoryCloseEvent e) {
         if (e.getPlayer().equals(player)) {

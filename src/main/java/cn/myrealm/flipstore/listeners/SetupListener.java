@@ -1,6 +1,7 @@
 package cn.myrealm.flipstore.listeners;
 
 import cn.myrealm.flipstore.FlipStore;
+import cn.myrealm.flipstore.commands.CommandSetup;
 import cn.myrealm.flipstore.guis.SetupGUI;
 import cn.myrealm.flipstore.managers.LanguageManager;
 import org.bukkit.Bukkit;
@@ -9,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 import java.util.Objects;
@@ -47,11 +49,12 @@ public class SetupListener implements Listener {
             LanguageManager.instance.sendMessage("setup-canceled", player);
             e.setCancelled(true);
             HandlerList.unregisterAll(this);
+            CommandSetup.players.remove(player);
         }
     }
 
     /**
-     * @Description: Call when press F
+     * @Description: Call when press F, only effect when there are items in off-hand
      * @Param: [e]
      * @return: void
      * @Author: rzt1020
@@ -60,13 +63,26 @@ public class SetupListener implements Listener {
     @EventHandler
     public void onPress_F_Key (PlayerSwapHandItemsEvent e) {
         if (e.getPlayer().equals(player)) {
-            if (Objects.nonNull(e.getMainHandItem()) && !e.getMainHandItem().getType().isAir()) {
-                SetupGUI setupGUI = new SetupGUI(player, e.getMainHandItem());
+            if (Objects.nonNull(e.getOffHandItem()) && !e.getOffHandItem().getType().isAir()) {
+                SetupGUI setupGUI = new SetupGUI(player, e.getOffHandItem());
                 Listener guiListener = new GUIListener(setupGUI);
                 Bukkit.getPluginManager().registerEvents(guiListener, FlipStore.instance);
                 setupGUI.openGUI();
             }
             e.setCancelled(true);
+        }
+    }
+    
+    /**
+     * @Description: remove the player who leaved
+     * @Param: [e]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/8
+    **/
+    public void onQuit (PlayerQuitEvent e) {
+        if (e.getPlayer().equals(player)) {
+            CommandSetup.players.remove(player);
         }
     }
 }

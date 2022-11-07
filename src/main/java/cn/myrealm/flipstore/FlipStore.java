@@ -9,6 +9,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -94,5 +97,17 @@ public final class FlipStore extends JavaPlugin {
             match = pattern.matcher(s);
         }
         return s.replace("&","§").replace("§§","&");
+    }
+
+    public static String toHash(@NonNull String s) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+            md.update(s.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            LanguageManager.instance.severe(e);
+        }
+        byte[] result = md != null ? md.digest() : new byte[0];
+        return new BigInteger(1, result).toString(16);
     }
 }

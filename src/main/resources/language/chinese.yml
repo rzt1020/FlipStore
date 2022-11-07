@@ -1,7 +1,18 @@
-database-connect-successful: 成功连接数据库
-only-player: 该操作仅玩家可用。
-setup-start: 配置模式已开启。
-setup-F-key: 手持需要配置的物品按“F”，开启配置GUI。
-setup-cancel: 对话框输入"cancel"来关闭配置模式。
-setup-canceled: 配置模式已关闭。
-setup-title: 配置菜单
+flipstore: "<#98FB98>[FlipStore] &r"
+database-connect-successful: "成功连接数据库。"
+only-player: "该操作仅玩家可用。"
+setup-start: "配置模式已开启。"
+setup-F-key: "手持需要配置的物品按“F”，开启配置GUI。"
+setup-cancel: "对话框输入 &ncancel&r 来关闭配置模式。"
+setup-canceled: "配置模式已关闭。"
+setup-title: "&0配置菜单"
+setup-set-price: "设置价格"
+setup-price-down: "&c降低价格 (-20%)"
+setup-price-up: "&a提升价格 (+20%)"
+setup-now-price: "当前价格: %price%"
+setup-after-price: "&6更新价格: &f%price%"
+setup-able-disable: "切换是否禁用"
+setup-able: "&a已启用"
+setup-disable: "&c已禁用"
+setup-now-state: "当前状态: %state%"
+setup-click: "&7(点击设置)"

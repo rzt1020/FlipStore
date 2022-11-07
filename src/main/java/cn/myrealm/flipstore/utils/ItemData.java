@@ -1,7 +1,5 @@
 package cn.myrealm.flipstore.utils;
 
-import org.bukkit.inventory.ItemStack;
-
 /**
  * @program: FlipStore
  * @description: Item's data
@@ -10,23 +8,23 @@ import org.bukkit.inventory.ItemStack;
  **/
 public class ItemData {
     // vars
-    private final ItemStack itemStack; // item
     private final double price, // price of an item
                          economic; // total economic sum caused by the item
     private final int times; // total number of times the item was acquired
+    private final boolean able; // the item can be acquired
 
     /**
      * @Description: Constructor
-     * @Param: [itemStack, price, times, economic]
+     * @Param: [price, times, economic, able]
      * @return:
      * @Author: rzt1020
      * @Date: 2022/11/6
     **/
-    public ItemData(ItemStack itemStack, double price, int times, double economic) {
-        this.itemStack = itemStack;
+    public ItemData(double price, int times, double economic, boolean able) {
         this.price = price;
         this.economic = economic;
         this.times = times;
+        this.able = able;
     }
     
     /**
@@ -63,13 +61,14 @@ public class ItemData {
     }
     
     /**
-     * @Description: get itemStack
+     * @Description: is able
      * @Param: []
-     * @return: org.bukkit.inventory.ItemStack
+     * @return: boolean
      * @Author: rzt1020
-     * @Date: 2022/11/6
+     * @Date: 2022/11/8
     **/
-    public ItemStack getItemStack() {
-        return itemStack;
+    public boolean isAble() {
+        return able;
     }
+    
 }

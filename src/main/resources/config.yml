@@ -10,3 +10,5 @@ mysql:
   pass: root
   # Please don't make it true, if you don't understand what SSL is
   use-ssl: false
+# The default price when the price of the item is not set
+default-price: 0.01

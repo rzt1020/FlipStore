@@ -11,6 +11,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * @program: FlipStore
@@ -19,6 +22,8 @@ import org.bukkit.event.Listener;
  * @create: 2022/11/06
  **/
 public class CommandSetup extends FlipCommand implements CommandExecutor {
+    // vars
+    public static Set<Player> players = new HashSet<>(); // players who are listened
 
     /**
      * @Description: execute the setup command
@@ -28,11 +33,17 @@ public class CommandSetup extends FlipCommand implements CommandExecutor {
      * @Date: 2022/11/6
     **/
     public void executeCommand(Player player) {
-        LanguageManager.instance.sendMessage("setup-start", player);
-        LanguageManager.instance.sendMessage("setup-F-key", player);
-        LanguageManager.instance.sendMessage("setup-cancel", player);
-        Listener listener = new SetupListener(player);
-        Bukkit.getPluginManager().registerEvents(listener, FlipStore.instance);
+        if (!players.contains(player)) {
+            LanguageManager.instance.sendMessage("setup-start", player);
+            LanguageManager.instance.sendMessage("setup-F-key", player);
+            LanguageManager.instance.sendMessage("setup-cancel", player);
+            Listener listener = new SetupListener(player);
+            Bukkit.getPluginManager().registerEvents(listener, FlipStore.instance);
+            players.add(player);
+        } else {
+            LanguageManager.instance.sendMessage("setup-F-key", player);
+            LanguageManager.instance.sendMessage("setup-cancel", player);
+        }
     }
 
     @Override
