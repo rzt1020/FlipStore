@@ -1,10 +1,9 @@
 package cn.myrealm.flipstore;
 
 import cn.myrealm.flipstore.commands.CommandFlipstore;
-import cn.myrealm.flipstore.managers.DatabaseManager;
-import cn.myrealm.flipstore.managers.LanguageManager;
-import cn.myrealm.flipstore.managers.Manager;
+import cn.myrealm.flipstore.managers.*;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -37,10 +36,7 @@ public final class FlipStore extends JavaPlugin {
             saveDefaultConfig();
             resourcesOutput();
         }
-        managers = new ArrayList<>();
-        managers.add(new LanguageManager());
-        managers.add(new DatabaseManager());
-
+        setupManager();
         Objects.requireNonNull(getCommand("flipstore")).setExecutor(new CommandFlipstore());
     }
 
@@ -70,6 +66,17 @@ public final class FlipStore extends JavaPlugin {
         }
     }
 
+    public void disable(String reason) {
+        LanguageManager.instance.severe(reason);
+        Bukkit.getPluginManager().disablePlugin(this);
+    }
+
+    public void setupManager() {
+        managers = new ArrayList<>();
+        managers.add(new LanguageManager());
+        managers.add(new DatabaseManager());
+    }
+
     /**
      * @Description: Resources output
      * @Param: []
@@ -96,9 +103,16 @@ public final class FlipStore extends JavaPlugin {
             s = s.replace(color, ChatColor.of(color.replace("<","").replace(">","")) + "");
             match = pattern.matcher(s);
         }
-        return s.replace("&","§").replace("§§","&");
+        return s.replace("&","\u00a7").replace("§§","&");
     }
 
+    /**
+     * @Description: Calculate the hash value of a string by MD5 standard
+     * @Param: [s]
+     * @return: java.lang.String
+     * @Author: rzt1020
+     * @Date: 2022/11/08
+    **/
     public static String toHash(@NonNull String s) {
         MessageDigest md = null;
         try {

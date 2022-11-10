@@ -15,11 +15,11 @@ import java.util.*;
 
 /**
  * @program: FlipStore
- * @description: Gui for setup a item
+ * @description: Gui for setup an item
  * @author: rzt1020
  * @create: 2022/11/06
  **/
-public class SetupGUI extends InventoryGUI {
+public class GUIInvSetup extends GUIInv {
     // vars
     private final ItemStack itemStack; // the itemStack be setup
     private final String hash;
@@ -30,12 +30,11 @@ public class SetupGUI extends InventoryGUI {
      * @Author: rzt1020
      * @Date: 2022/11/6
      */
-    public SetupGUI(Player owner, ItemStack itemStack) {
+    public GUIInvSetup(Player owner, ItemStack itemStack) {
         super(owner);
         itemStack.setAmount(1);
         this.itemStack = itemStack;
         hash = FlipStore.toHash(this.itemStack.toString());
-        this.itemData = DatabaseManager.instance.NBTInsert(hash);
         constructGUI();
     }
 
@@ -48,10 +47,12 @@ public class SetupGUI extends InventoryGUI {
     **/
     @Override
     protected void constructGUI() {
-        if (Objects.isNull(inventory)) {
-            inventory = Bukkit.createInventory(owner, 18, LanguageManager.instance.getText("setup-title"));
+        this.itemData = DatabaseManager.instance.NBTInsert(hash);
+
+        if (Objects.isNull(inv)) {
+            inv = Bukkit.createInventory(owner, 18, LanguageManager.instance.getText("setup-title"));
         }
-        inventory.setItem(4,itemStack);
+        inv.setItem(4,itemStack);
         ItemMeta itemMeta;
         List<String> lore;
 
@@ -65,7 +66,7 @@ public class SetupGUI extends InventoryGUI {
                 LanguageManager.instance.getText("setup-click")));
         itemMeta.setLore(lore);
         hopper.setItemMeta(itemMeta);
-        inventory.setItem(12, hopper);
+        inv.setItem(12, hopper);
 
         ItemStack sunflower = new ItemStack(Material.SUNFLOWER);
         itemMeta = sunflower.getItemMeta();
@@ -76,7 +77,7 @@ public class SetupGUI extends InventoryGUI {
                 LanguageManager.instance.getText("setup-click")));
         itemMeta.setLore(lore);
         sunflower.setItemMeta(itemMeta);
-        inventory.setItem(13, sunflower);
+        inv.setItem(13, sunflower);
 
         ItemStack redstone = new ItemStack(Material.REDSTONE);
         itemMeta = redstone.getItemMeta();
@@ -88,7 +89,7 @@ public class SetupGUI extends InventoryGUI {
                 LanguageManager.instance.getText("setup-click")));
         itemMeta.setLore(lore);
         redstone.setItemMeta(itemMeta);
-        inventory.setItem(14, redstone);
+        inv.setItem(14, redstone);
 
         ItemStack wool;
         if (itemData.isAble()) wool = new ItemStack(Material.LIME_WOOL);
@@ -102,7 +103,7 @@ public class SetupGUI extends InventoryGUI {
                 LanguageManager.instance.getText("setup-click")));
         itemMeta.setLore(lore);
         wool.setItemMeta(itemMeta);
-        inventory.setItem(17, wool);
+        inv.setItem(17, wool);
 
         ItemStack glassPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         itemMeta = glassPane.getItemMeta();
@@ -126,7 +127,10 @@ public class SetupGUI extends InventoryGUI {
                 DatabaseManager.instance.NBTPriceUpdate(hash, itemData.getPrice() * 0.8);
                 break;
             case 13:
-
+                GUISignPrice signPrice =new GUISignPrice(owner, itemData, this);
+                signPrice.constructGUI();
+                owner.closeInventory();
+                signPrice.openGUI();
                 break;
             case 14:
                 DatabaseManager.instance.NBTPriceUpdate(hash, itemData.getPrice() * 1.2);

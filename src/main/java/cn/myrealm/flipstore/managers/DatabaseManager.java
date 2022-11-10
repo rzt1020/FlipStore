@@ -178,7 +178,8 @@ public class DatabaseManager implements Manager{
                              "WHERE HASH = " + "'" + hash + "';";
                 rs = stmt.executeQuery(sql);
                 while (rs.next()) {
-                    itemData = new ItemData(rs.getDouble("PRICE"),
+                    itemData = new ItemData(hash,
+                                            rs.getDouble("PRICE"),
                                             rs.getInt("TIMES"),
                                             rs.getDouble("ECONOMIC"),
                                             rs.getBoolean("ABLE"));
@@ -197,7 +198,8 @@ public class DatabaseManager implements Manager{
                              "WHERE HASH = " + "'" + hash + "';";
                 rs = stmt.executeQuery(sql);
                 if (rs.next()) {
-                    itemData = new ItemData(rs.getDouble("PRICE"),
+                    itemData = new ItemData(hash,
+                                            rs.getDouble("PRICE"),
                                             rs.getInt("TIMES"),
                                             rs.getDouble("ECONOMIC"),
                                             rs.getBoolean("ABLE"));

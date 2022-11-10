@@ -11,7 +11,7 @@ import java.util.Map;
  * @author: rzt1020
  * @create: 2022/11/06
  **/
-public abstract class FlipCommand {
+public abstract class CommandAbstract {
     // vars
     protected static final Map<String, CommandExecutor> subCommands = new HashMap<>(); // command name, subcommand map
 

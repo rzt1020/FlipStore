@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
  * @author: rzt1020
  * @create: 2022/10/14
  **/
-public class CommandFlipstore extends FlipCommand implements CommandExecutor {
+public class CommandFlipstore extends CommandAbstract implements CommandExecutor {
     static {
         subCommands.put("reload", new CommandReload());
         subCommands.put("setup", new CommandSetup());

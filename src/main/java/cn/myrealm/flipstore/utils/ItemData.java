@@ -12,15 +12,17 @@ public class ItemData {
                          economic; // total economic sum caused by the item
     private final int times; // total number of times the item was acquired
     private final boolean able; // the item can be acquired
+    private final String hash; // the hash count from item
 
     /**
      * @Description: Constructor
-     * @Param: [price, times, economic, able]
+     * @Param: [hash, price, times, economic, able]
      * @return:
      * @Author: rzt1020
      * @Date: 2022/11/6
     **/
-    public ItemData(double price, int times, double economic, boolean able) {
+    public ItemData(String hash, double price, int times, double economic, boolean able) {
+        this.hash = hash;
         this.price = price;
         this.economic = economic;
         this.times = times;
@@ -70,5 +72,15 @@ public class ItemData {
     public boolean isAble() {
         return able;
     }
-    
+
+    /**
+     * @Description: get hash
+     * @Param: []
+     * @return: java.lang.String
+     * @Author: rzt1020
+     * @Date: 2022/11/10
+    **/
+    public String getHash() {
+        return hash;
+    }
 }

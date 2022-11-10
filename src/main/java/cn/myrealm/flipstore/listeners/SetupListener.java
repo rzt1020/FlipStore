@@ -2,7 +2,7 @@ package cn.myrealm.flipstore.listeners;
 
 import cn.myrealm.flipstore.FlipStore;
 import cn.myrealm.flipstore.commands.CommandSetup;
-import cn.myrealm.flipstore.guis.SetupGUI;
+import cn.myrealm.flipstore.guis.GUIInvSetup;
 import cn.myrealm.flipstore.managers.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -64,7 +64,7 @@ public class SetupListener implements Listener {
     public void onPress_F_Key (PlayerSwapHandItemsEvent e) {
         if (e.getPlayer().equals(player)) {
             if (Objects.nonNull(e.getOffHandItem()) && !e.getOffHandItem().getType().isAir()) {
-                SetupGUI setupGUI = new SetupGUI(player, e.getOffHandItem());
+                GUIInvSetup setupGUI = new GUIInvSetup(player, e.getOffHandItem());
                 Listener guiListener = new GUIListener(setupGUI);
                 Bukkit.getPluginManager().registerEvents(guiListener, FlipStore.instance);
                 setupGUI.openGUI();
@@ -80,6 +80,7 @@ public class SetupListener implements Listener {
      * @Author: rzt1020
      * @Date: 2022/11/8
     **/
+    @EventHandler
     public void onQuit (PlayerQuitEvent e) {
         if (e.getPlayer().equals(player)) {
             CommandSetup.players.remove(player);

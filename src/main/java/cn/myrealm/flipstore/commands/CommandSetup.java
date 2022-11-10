@@ -21,7 +21,7 @@ import java.util.Set;
  * @author: rzt1020
  * @create: 2022/11/06
  **/
-public class CommandSetup extends FlipCommand implements CommandExecutor {
+public class CommandSetup extends CommandAbstract implements CommandExecutor {
     // vars
     public static Set<Player> players = new HashSet<>(); // players who are listened
 
@@ -58,7 +58,7 @@ public class CommandSetup extends FlipCommand implements CommandExecutor {
      * @Date: 2022/11/6
     **/
     @Override
-    public boolean onCommand(@SuppressWarnings("NullableProblems") CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand( CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             executeCommand(player);

@@ -1,8 +1,10 @@
 name: FlipStore
 version: '${project.version}'
 main: cn.myrealm.flipstore.FlipStore
-api-version: 1.19
+api-version: 1.13
 authors: [ ManyouTeam ]
+softdepend:
+  - ProtocolLib
 commands:
   flipstore:
     aliases:

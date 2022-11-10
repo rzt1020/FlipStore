@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
  * @author: rzt1020
  * @create: 2022/10/14
  **/
-public class CommandReload extends FlipCommand implements CommandExecutor {
+public class CommandReload extends CommandAbstract implements CommandExecutor {
 
     /**
      * @Description: execute the reload command

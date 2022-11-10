@@ -119,6 +119,17 @@ public class LanguageManager implements Manager{
     }
     
     /**
+     * @Description: Output the error report to the server console
+     * @Param: [msg]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/10
+    **/
+    public void severe(@NonNull String msg) {
+        FlipStore.instance.getLogger().severe( msg );
+    }
+    
+    /**
      * @Description: Log to the server console
      * @Param: [msg]
      * @return: void

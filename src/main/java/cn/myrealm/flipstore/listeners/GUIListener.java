@@ -1,6 +1,6 @@
 package cn.myrealm.flipstore.listeners;
 
-import cn.myrealm.flipstore.guis.InventoryGUI;
+import cn.myrealm.flipstore.guis.GUIInv;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -20,7 +20,7 @@ import java.util.Objects;
 public class GUIListener implements Listener {
     // vars
     private final Player player; // the player this gui open for
-    private final InventoryGUI gui; // the gui call this listener
+    private final GUIInv gui; // the gui call this listener
 
     /**
      * @Description: Constructor
@@ -29,7 +29,7 @@ public class GUIListener implements Listener {
      * @Author: rzt1020
      * @Date: 2022/11/6
     **/
-    public GUIListener(InventoryGUI gui) {
+    public GUIListener(GUIInv gui) {
         this.gui = gui;
         this.player = gui.getOwner();
     }
@@ -44,7 +44,7 @@ public class GUIListener implements Listener {
     **/
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if (e.getWhoClicked().equals(player) && Objects.equals(e.getClickedInventory(), gui.getInventory())) {
+        if (e.getWhoClicked().equals(player) && Objects.equals(e.getClickedInventory(), gui.getInv())) {
             e.setCancelled(gui.clickEventHandle(e.getSlot()));
             if(e.getClick().toString().equals("SWAP_OFFHAND") && e.isCancelled()) {
                 player.getInventory().setItemInOffHand(player.getInventory().getItemInOffHand());
