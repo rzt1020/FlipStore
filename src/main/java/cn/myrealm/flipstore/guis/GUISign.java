@@ -11,6 +11,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -75,13 +76,15 @@ public abstract class GUISign extends GUI{
         owner.getWorld().getBlockAt(x_start, y_start, z_start).setType(material);
 
         sign = (Sign)owner.getWorld().getBlockAt(x_start, y_start, z_start).getState();
-
         int i = 0;
         for(String line : text){
             sign.setLine(i, line);
             i++;
         }
-        LanguageManager.instance.sendMessage(owner,text.toString());
+        if (Bukkit.getVersion().contains("1.19") || Bukkit.getVersion().contains("1.18")) {
+            sign.setColor(DyeColor.GREEN);
+        }
+        LanguageManager.instance.sendMessage(owner,sign.getBlockData().toString());
 
         sign.update(false, false);
 

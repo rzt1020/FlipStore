@@ -22,7 +22,8 @@ import java.util.*;
 public class GUIInvSetup extends GUIInv {
     // vars
     private final ItemStack itemStack; // the itemStack be setup
-    private final String hash;
+    private final String hash; // item's hash
+    private final List<Double> priceHistory = new ArrayList<>(); // price setting history
     private ItemData itemData; // the data of this item
     /**
      * @Description: Constructor
@@ -55,6 +56,20 @@ public class GUIInvSetup extends GUIInv {
         inv.setItem(4,itemStack);
         ItemMeta itemMeta;
         List<String> lore;
+
+        ItemStack feather = new ItemStack(Material.FEATHER);
+        itemMeta = feather.getItemMeta();
+        assert itemMeta != null;
+        itemMeta.setDisplayName(LanguageManager.instance.getText("setup-back"));
+        double lastPrice = (priceHistory.isEmpty() ? itemData.getPrice() : priceHistory.get(priceHistory.size()-1));
+        lastPrice = lastPrice == -1 ? itemData.getPrice() : lastPrice;
+        lore = new ArrayList<>(Arrays.asList(
+                LanguageManager.instance.getVarText("setup-now-price", "price", String.format("%.2f",itemData.getPrice())),
+                LanguageManager.instance.getVarText("setup-after-price", "price", String.format("%.2f", lastPrice)),
+                LanguageManager.instance.getText("setup-click")));
+        itemMeta.setLore(lore);
+        feather.setItemMeta(itemMeta);
+        inv.setItem(9, feather);
 
         ItemStack hopper = new ItemStack(Material.HOPPER);
         itemMeta = hopper.getItemMeta();
@@ -123,20 +138,35 @@ public class GUIInvSetup extends GUIInv {
     @Override
     public boolean clickEventHandle(int slot) {
         switch (slot) {
+            case 9:
+                if (!priceHistory.isEmpty()) {
+                    double lastPrice = priceHistory.remove(priceHistory.size()-1);
+                    if (lastPrice == -1) {
+                        DatabaseManager.instance.NBTAbleUpdate(hash);
+                    } else {
+                        DatabaseManager.instance.NBTPriceUpdate(hash, lastPrice);
+                    }
+                }
+                break;
             case 12:
+                priceHistoryAdd(itemData.getPrice());
                 DatabaseManager.instance.NBTPriceUpdate(hash, itemData.getPrice() * 0.8);
+
                 break;
             case 13:
+                priceHistoryAdd(itemData.getPrice());
                 GUISignPrice signPrice =new GUISignPrice(owner, itemData, this);
                 signPrice.constructGUI();
                 owner.closeInventory();
                 signPrice.openGUI();
                 break;
             case 14:
+                priceHistoryAdd(itemData.getPrice());
                 DatabaseManager.instance.NBTPriceUpdate(hash, itemData.getPrice() * 1.2);
                 break;
             case 17:
                 DatabaseManager.instance.NBTAbleUpdate(hash);
+                priceHistoryAdd(-1);
                 break;
         }
         this.itemData = DatabaseManager.instance.NBTInsert(FlipStore.toHash(this.itemStack.toString()));
@@ -168,5 +198,16 @@ public class GUIInvSetup extends GUIInv {
     @Override
     public boolean dragEventHandle(Set<Integer> slots) {
         return false;
+    }
+
+    /**
+     * @Description: add a new price in history
+     * @Param: [price]
+     * @return: void
+     * @Author: rzt1020
+     * @Date: 2022/11/10
+    **/
+    public void priceHistoryAdd(double price) {
+        priceHistory.add(price);
     }
 }
